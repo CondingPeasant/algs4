@@ -17,47 +17,6 @@ public class PercolationTest {
     }
 
     @Test
-    public void testConver2DTo1D() {
-        Percolation p = new Percolation(3);
-        Class c = Percolation.class;
-        try {
-            Method method = c.getDeclaredMethod("conver2DTo1D", new Class[]{int.class, int.class});
-            method.setAccessible(true);
-            Object result = method.invoke(p, new Object[]{1,1});
-            assertEquals(1, result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Method method = c.getDeclaredMethod("conver2DTo1D", new Class[]{int.class, int.class});
-            method.setAccessible(true);
-            Object result = method.invoke(p, new Object[]{1,3});
-            assertEquals(3, result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Method method = c.getDeclaredMethod("conver2DTo1D", new Class[]{int.class, int.class});
-            method.setAccessible(true);
-            Object result = method.invoke(p, new Object[]{3,1});
-            assertEquals(7, result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Method method = c.getDeclaredMethod("conver2DTo1D", new Class[]{int.class, int.class});
-            method.setAccessible(true);
-            Object result = method.invoke(p, new Object[]{3,3});
-            assertEquals(9, result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
     public void testOutOfBound() {
         Percolation p = new Percolation(1);
         try {
@@ -144,8 +103,9 @@ public class PercolationTest {
     public void testOthers_4() {
         Percolation p = new Percolation(3);
         p.open(1, 3);
-        p.open(2, 3);
         p.open(3, 3);
+        p.open(2, 3);
+        assertTrue(p.percolates());
         p.open(3, 1);
         assertFalse(p.isFull(3, 1));
         assertTrue(p.percolates());

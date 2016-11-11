@@ -45,15 +45,6 @@ public class PercolationStats {
     // test client (described below)
     public static void main(String[] args)
     {
-        int n = Integer.parseInt(args[0]);
-        int trials = Integer.parseInt(args[1]);
-        PercolationStats ps = new PercolationStats(n, trials);
-//        StdOut.printf("mean                    = %ld\n", ps.mean());
-//        StdOut.printf("stddev                  = %ld\n", ps.stddev());
-//        StdOut.printf("95% confidence interval = %ld, %ld\n", ps.confidenceLo(), ps.confidenceHi());
-        System.out.println("mean                    = " + ps.mean());
-        System.out.println("stddev                  = " + ps.stddev());
-        System.out.println("95% confidence interval = " + ps.confidenceLo() + " " + ps.confidenceHi());
     }
 
     private void checkParam(int n, int t) {
