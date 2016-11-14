@@ -26,7 +26,7 @@ public class Percolation {
         }
     }
 
-    // open site (row, col) if it is not open already:w
+    // open site (row, col) if it is not open already
     public void open(int row, int col)
     {
         if (mGrid[row - 1][col - 1] == true)
@@ -54,6 +54,9 @@ public class Percolation {
         if (row == 1) {
             mUF.union(selfIndex, top);
         }
+        if (row == size) {
+            mUF.union(selfIndex, bottom);
+        }
     }
 
     // is site (row, col) open?
@@ -75,12 +78,7 @@ public class Percolation {
     // does the system percolate?
     public boolean percolates()
     {
-        for (int i = 1; i <= size; i++) {
-            if (isFull(size, i)) {
-                return true;
-            }
-        }
-        return false;
+        return mUF.connected(top, bottom);
     }
  
     // test client (optional)
