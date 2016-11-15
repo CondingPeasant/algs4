@@ -4,7 +4,8 @@ public class Percolation {
     private final int top;
     private final int bottom;
     private boolean[][] mGrid;
-    private WeightedQuickUnionUF mUF;
+    private WeightedQuickUnionUF mUFForPercolates;
+    private WeightedQuickUnionUF mUFForIsFull;
     private int size;
 
     // create n-by-n grid, with all sites blocked
@@ -16,7 +17,8 @@ public class Percolation {
         size = n;
         top = 0;
         bottom = size * size + 1;
-        mUF = new WeightedQuickUnionUF(n * n + 2);
+        mUFForPercolates = new WeightedQuickUnionUF(n * n + 2);
+        mUFForIsFull = new WeightedQuickUnionUF(n * n + 1);
 
         mGrid = new boolean[n + 1][n + 1];
         for (int i = 1; i <= n; i++) {
@@ -38,25 +40,30 @@ public class Percolation {
         int selfIndex = conver2DTo1D(row, col);
         // union up site
         if (row != 1 && isOpen(row - 1, col)) {
-            mUF.union(selfIndex, conver2DTo1D(row - 1, col));
+            mUFForPercolates.union(selfIndex, conver2DTo1D(row - 1, col));
+            mUFForIsFull.union(selfIndex, conver2DTo1D(row - 1, col));
         }
         // union down site
         if (row != size && isOpen(row + 1, col)) {
-            mUF.union(selfIndex, conver2DTo1D(row + 1, col));
+            mUFForPercolates.union(selfIndex, conver2DTo1D(row + 1, col));
+            mUFForIsFull.union(selfIndex, conver2DTo1D(row + 1, col));
         }
         // union left site
         if (col != 1 && isOpen(row, col - 1)) {
-            mUF.union(selfIndex, conver2DTo1D(row, col - 1));
+            mUFForPercolates.union(selfIndex, conver2DTo1D(row, col - 1));
+            mUFForIsFull.union(selfIndex, conver2DTo1D(row, col - 1));
         }
         // union right site
         if (col != size && isOpen(row, col + 1)) {
-            mUF.union(selfIndex, conver2DTo1D(row, col + 1));
+            mUFForPercolates.union(selfIndex, conver2DTo1D(row, col + 1));
+            mUFForIsFull.union(selfIndex, conver2DTo1D(row, col + 1));
         }
         if (row == 1) {
-            mUF.union(selfIndex, top);
+            mUFForPercolates.union(selfIndex, top);
+            mUFForIsFull.union(selfIndex, top);
         }
         if (row == size) {
-            mUF.union(selfIndex, bottom);
+            mUFForPercolates.union(selfIndex, bottom);
         }
     }
 
@@ -71,7 +78,7 @@ public class Percolation {
     public boolean isFull(int row, int col)
     {
         if (isOpen(row, col)) {
-            return mUF.connected(top, size * (row - 1) + col);
+            return mUFForIsFull.connected(top, size * (row - 1) + col);
         } else {
             return false;
         }
@@ -80,7 +87,7 @@ public class Percolation {
     // does the system percolate?
     public boolean percolates()
     {
-        return mUF.connected(top, bottom);
+        return mUFForPercolates.connected(top, bottom);
     }
  
     // test client (optional)
