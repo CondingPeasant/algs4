@@ -5,10 +5,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // is the queue empty?
     public boolean isEmpty() {
+        return false;
     }
 
     // return the number of items on the queue
     public int size() {
+        return 0;
     }
 
     // add the item
