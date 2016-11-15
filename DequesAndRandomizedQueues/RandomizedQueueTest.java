@@ -41,7 +41,10 @@ public class RandomizedQueueTest {
     @Test
     public void testSample() {
         RandomizedQueue<String> rq = new RandomizedQueue<String>();
-        assertEquals(rq.sample(), null);
+        try {
+            rq.sample();
+        } catch (NoSuchElementException aNoSuchElementException) {
+        }
     }
 
     @Test

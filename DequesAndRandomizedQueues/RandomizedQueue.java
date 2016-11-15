@@ -31,10 +31,22 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     public void enqueue(Item item) {
         if (null == item)
             throw new NullPointerException("Cannot add a null object.");
+
+        Node node = new Node();
+        node.item = item;
+        node.next = null;
+        node.pre = last;
+        last = node;
+
+        if (1 == ++size) {
+            first = last;
+        }
     }
 
     // remove and return a random item
     public Item dequeue() {
+        if (0 == size)
+            throw new NoSuchElementException("RandomizedQueue is empty");
         int index = StdRandom.uniform(size);
         Node node = find(index);
         if (null != node.pre) {
@@ -46,11 +58,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             node.next.pre = node.pre;
             node.next = null;
         }
+
+        if (0 == --size) {
+            first = null;
+            last = null;
+        }
         return node.item;
     }
 
     // return (but do not remove) a random item
     public Item sample() {
+        if (0 == size)
+            throw new NoSuchElementException("RandomizedQueue is empty");
+
         int index = StdRandom.uniform(size);
         Node node = find(index);
         return node.item;
@@ -75,7 +95,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private Item[] mItem = (Item[]) new Object[size];
         private int index = 0;
         public RandomizedQueueIterator() {
-            for (Node p = first; null != p.next; p = p.next) {
+            for (Node p = first; null != p; p = p.next) {
                 int i;
                 do {
                     i = StdRandom.uniform(size);
