@@ -1,24 +1,30 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 public class RandomizedQueue<Item> implements Iterable<Item> {
-    private static final int sizeLowBound = 1;
-    private int size;
-    private Item[] mRQ;
+    private class Node {
+        private Item item;
+        private Node pre;
+        private Node next;
+    }
+
+    private int size = 0;
+    private Node first = null;
+    private Node last = null;
     // construct an empty randomized queue
     public RandomizedQueue() {
-        size = 0;
-        mRQ = (Item[]) new Object[sizeLowBound];
     }
 
     // is the queue empty?
     public boolean isEmpty() {
-        return true;
+        return 0 == size;
     }
 
     // return the number of items on the queue
     public int size() {
-        return 0;
+        return size;
     }
 
     // add the item
@@ -29,15 +35,36 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // remove and return a random item
     public Item dequeue() {
-        return null;
+        int index = StdRandom.uniform(size);
+        Node node = find(index);
+        if (null != node.pre) {
+            node.pre.next = node.next;
+            node.pre = null;
+        }
+
+        if (null != node.next) {
+            node.next.pre = node.pre;
+            node.next = null;
+        }
+        return node.item;
     }
 
     // return (but do not remove) a random item
     public Item sample() {
-        return null;
+        int index = StdRandom.uniform(size);
+        Node node = find(index);
+        return node.item;
     }
 
-    private void resize() {}
+    private Node find(int index) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException();
+
+        Node node = first;
+        for (int i = 0; i < index; i++)
+            node = node.next;
+        return node;
+    }
 
     // return an independent iterator over items in random order
     public Iterator<Item> iterator() {
@@ -45,14 +72,31 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
+        private Item[] mItem = (Item[]) new Object[size];
+        private int index = 0;
+        public RandomizedQueueIterator() {
+            for (Node p = first; null != p.next; p = p.next) {
+                int i;
+                do {
+                    i = StdRandom.uniform(size);
+                } while (null == mItem[i]);
+                mItem[i] = p.item;
+            }
+        }
+
         public boolean hasNext() {
-            return false;
+            return index >= 0 && index < size;
         }
+
         public void remove() {
-            throw new UnsupportedOperationException("DequeIterator does not support remove operation.");
+            throw new UnsupportedOperationException(
+                    "DequeIterator does not support remove operation.");
         }
+
         public Item next() {
-            throw new NoSuchElementException("There's no next element.");
+            if (index >= size)
+                throw new NoSuchElementException("There's no next element.");
+            return mItem[index++];
         }
     }
 

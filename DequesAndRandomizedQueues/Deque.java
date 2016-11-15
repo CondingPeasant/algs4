@@ -3,9 +3,9 @@ import java.util.NoSuchElementException;
 
 public class Deque<Item> implements Iterable<Item> {
     private class Node {
-        Item item;
-        Node pre;
-        Node next;
+        private Item item;
+        private Node pre;
+        private Node next;
     }
 
     private int size;
@@ -38,8 +38,10 @@ public class Deque<Item> implements Iterable<Item> {
         node.item = item;
 
         if (1 == ++size) {
-            last = first = node;
-            node.pre = node.next = null;
+            last = node;
+            first = node;
+            node.pre = null;
+            node.next = null;
         } else {
             node.pre = null;
             node.next = first;
@@ -57,8 +59,10 @@ public class Deque<Item> implements Iterable<Item> {
         node.item = item;
 
         if (1 == ++size) {
-            last = first = node;
-            node.pre = node.next = null;
+            last = node;
+            first = node;
+            node.pre = null;
+            node.next = null;
         } else {
             node.pre = last;
             node.next = null;
@@ -71,11 +75,13 @@ public class Deque<Item> implements Iterable<Item> {
     // remove and return the item from the front
     public Item removeFirst() {
         if (0 == size)
-            throw new NoSuchElementException("Deque is empty, there's nothing to remove!");
+            throw new NoSuchElementException(
+                    "Deque is empty, there's nothing to remove!");
 
         Node node = first;
         if (0 == --size) {
-            first = last = null;
+            first = null;
+            last = null;
         } else {
             first = first.next;
             first.pre = null;
@@ -89,11 +95,13 @@ public class Deque<Item> implements Iterable<Item> {
     // remove and return the item from the end
     public Item removeLast() {
         if (0 == size)
-            throw new NoSuchElementException("Deque is empty, there's nothing to remove!");
+            throw new NoSuchElementException(
+                    "Deque is empty, there's nothing to remove!");
 
         Node node = last;
         if (0 == --size) {
-            first = last = null;
+            first = null;
+            last = null;
         } else {
             last = last.pre;
             last.next = null;
@@ -115,7 +123,8 @@ public class Deque<Item> implements Iterable<Item> {
             return null != current;
         }
         public void remove() {
-            throw new UnsupportedOperationException("DequeIterator does not support remove operation.");
+            throw new UnsupportedOperationException(
+                    "DequeIterator does not support remove operation.");
         }
         public Item next() {
             if (null == current)
