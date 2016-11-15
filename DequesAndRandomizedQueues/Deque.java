@@ -9,8 +9,8 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     private int size;
-    private Item first;
-    private Item last;
+    private Node first;
+    private Node last;
 
     // construct an empty deque
     public Deque() {
@@ -21,7 +21,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     // is the deque empty?
     public boolean isEmpty() {
-        return true;
+        return 0 == size;
     }
 
     // return the number of items on the deque
@@ -33,26 +33,75 @@ public class Deque<Item> implements Iterable<Item> {
     public void addFirst(Item item) {
         if (null == item)
             throw new NullPointerException("Cannot add a null object.");
+
+        Node node = new Node();
+        node.item = item;
+
+        if (1 == ++size) {
+            last = first = node;
+            node.pre = node.next = null;
+        } else {
+            node.pre = null;
+            node.next = first;
+            first.pre = node;
+            first = node;
+        }
     }
 
     // add the item to the end
     public void addLast(Item item) {
         if (null == item)
             throw new NullPointerException("Cannot add a null object.");
+
+        Node node = new Node();
+        node.item = item;
+
+        if (1 == ++size) {
+            last = first = node;
+            node.pre = node.next = null;
+        } else {
+            node.pre = last;
+            node.next = null;
+            last.next = node;
+            last = node;
+        }
+
     }
 
     // remove and return the item from the front
     public Item removeFirst() {
         if (0 == size)
             throw new NoSuchElementException("Deque is empty, there's nothing to remove!");
-        return first;
+
+        Node node = first;
+        if (0 == --size) {
+            first = last = null;
+        } else {
+            first = first.next;
+            first.pre = null;
+        }
+        
+        node.next = null;
+        node.pre = null;
+        return node.item;
     }
 
     // remove and return the item from the end
     public Item removeLast() {
         if (0 == size)
             throw new NoSuchElementException("Deque is empty, there's nothing to remove!");
-        return last;
+
+        Node node = last;
+        if (0 == --size) {
+            first = last = null;
+        } else {
+            last = last.pre;
+            last.next = null;
+        }
+
+        node.next = null;
+        node.pre = null;
+        return node.item;
     }
 
     // return an iterator over items in order from front to end
@@ -61,14 +110,20 @@ public class Deque<Item> implements Iterable<Item> {
     }
 
     private class DequeIterator implements Iterator<Item> {
+        private Node current = first;
         public boolean hasNext() {
-            return false;
+            return null != current;
         }
         public void remove() {
             throw new UnsupportedOperationException("DequeIterator does not support remove operation.");
         }
         public Item next() {
-            throw new NoSuchElementException("There's no next element.");
+            if (null == current)
+                throw new NoSuchElementException("There's no next element.");
+
+            Item item = current.item;
+            current = current.next;
+            return item;
         }
     }
 
