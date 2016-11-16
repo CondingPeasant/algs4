@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -6,12 +8,17 @@ public class Subset {
        int k = Integer.parseInt(args[0]);
        RandomizedQueue<String> rq = new RandomizedQueue<String>();
        String s;
-       while (null != (s = StdIn.readString())) {
-           rq.enqueue(s);
+       while (true) {
+           try {
+               s = StdIn.readString();
+               rq.enqueue(s);
+           } catch (NoSuchElementException aNoSuchElementException) {
+               break;
+           }
        }
 
        for (int i = 0; i < k; i++) {
-           StdOut.println(rq.sample());
+           StdOut.println(rq.dequeue());
        }
    }
 }
