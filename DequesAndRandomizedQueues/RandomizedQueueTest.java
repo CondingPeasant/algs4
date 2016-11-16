@@ -63,4 +63,26 @@ public class RandomizedQueueTest {
         }
     }
 
+    @Test
+    public void testCase1() {
+        RandomizedQueue<String> rq = new RandomizedQueue<String>();
+        rq.enqueue("one");
+        assertEquals(rq.size(), 1);
+        rq.enqueue("two");
+        assertEquals(rq.size(), 2);
+        rq.enqueue("three");
+        assertEquals(rq.size(), 3);
+        rq.enqueue("four");
+        assertEquals(rq.size(), 4);
+
+        rq.dequeue();
+        assertEquals(rq.size(), 3);
+        rq.dequeue();
+        assertEquals(rq.size(), 2);
+        rq.dequeue();
+        assertEquals(rq.size(), 1);
+        rq.dequeue();
+        assertEquals(rq.size(), 0);
+        assertTrue(rq.isEmpty());
+    }
 }

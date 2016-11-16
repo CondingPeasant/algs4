@@ -108,12 +108,13 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private class RandomizedQueueIterator implements Iterator<Item> {
         private Item[] mItem = (Item[]) new Object[size];
         private int index = 0;
+
         public RandomizedQueueIterator() {
             for (Node p = first; null != p; p = p.next) {
                 int i;
                 do {
                     i = StdRandom.uniform(size);
-                } while (null == mItem[i]);
+                } while (null != mItem[i]);
                 mItem[i] = p.item;
             }
         }
@@ -143,15 +144,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             rq.enqueue(s);
         }
         StdOut.println();
-        for (int i = 0; i < n; i++) {
-            StdOut.println(rq.sample());
-        }
-        StdOut.println();
-        int k = StdIn.readInt(); 
-        if (k > n)
-            k = n;
-        for (int i = 0; i < k; i++) {
-            StdOut.println(rq.dequeue());
+        Iterator<String> it = rq.iterator();
+        while (it.hasNext()) {
+            StdOut.println(it.next());
         }
     }
 }
