@@ -1,6 +1,8 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import edu.princeton.cs.algs4.StdIn;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
@@ -36,11 +38,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         node.item = item;
         node.next = null;
         node.pre = last;
-        last = node;
 
         if (1 == ++size) {
-            first = last;
+            first = node;
+        } else {
+            last.next = node;
         }
+
+        last = node;
     }
 
     // remove and return a random item
@@ -48,21 +53,27 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (0 == size)
             throw new NoSuchElementException("RandomizedQueue is empty");
         int index = StdRandom.uniform(size);
+//        StdOut.println("dequeue(): size = " + size + ", index = " + index);
         Node node = find(index);
         if (null != node.pre) {
             node.pre.next = node.next;
-            node.pre = null;
         }
 
         if (null != node.next) {
             node.next.pre = node.pre;
-            node.next = null;
         }
 
         if (0 == --size) {
             first = null;
             last = null;
+        } else if (first == node) {
+            first = node.next;
+        } else if (last == node) {
+            last = node.pre;
         }
+
+        node.pre = null;
+        node.next = null;
         return node.item;
     }
 
@@ -72,14 +83,17 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException("RandomizedQueue is empty");
 
         int index = StdRandom.uniform(size);
+//        StdOut.println("sample(): size = " + size + ", index = " + index);
         Node node = find(index);
         return node.item;
     }
 
+    // 0 <= index < size
     private Node find(int index) {
         if (index < 0 || index >= size)
             throw new IndexOutOfBoundsException();
 
+        // StdOut.println("size = " + size + ", index = " + index);
         Node node = first;
         for (int i = 0; i < index; i++)
             node = node.next;
@@ -122,5 +136,22 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     // unit testing
     public static void main(String[] args) {
+        RandomizedQueue<String> rq = new RandomizedQueue<String>();
+        int n = StdIn.readInt();
+        for (int i = 0; i < n; i++) {
+            String s = StdIn.readString();
+            rq.enqueue(s);
+        }
+        StdOut.println();
+        for (int i = 0; i < n; i++) {
+            StdOut.println(rq.sample());
+        }
+        StdOut.println();
+        int k = StdIn.readInt(); 
+        if (k > n)
+            k = n;
+        for (int i = 0; i < k; i++) {
+            StdOut.println(rq.dequeue());
+        }
     }
 }
