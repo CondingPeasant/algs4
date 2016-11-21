@@ -59,8 +59,13 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
-        /* YOUR CODE HERE */
-        return 0.0;
+        if (x != that.x) {
+            return (float) (that.y - y) / (float) (that.x -x);
+        } else if (that.y > y) {
+            return Float.MAX_VALUE;
+        } else {
+            return -Float.MAX_VALUE;
+        }
     }
 
     /**
@@ -76,8 +81,13 @@ public class Point implements Comparable<Point> {
      *         argument point
      */
     public int compareTo(Point that) {
-        /* YOUR CODE HERE */
-        return 0;
+        if (y < that.y || (y == that.y && x < that.x)) {
+            return -1;
+        } else if (y == that.y && x == that.x) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     /**
@@ -87,9 +97,21 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        /* YOUR CODE HERE */
+        return new SlopeOrder();
     }
 
+    private class SlopeOrder implements Comparator<Point> {
+        public int compare(Point v, Point w) {
+            float delta = 0.00001F;
+            if (slopeTo(v) - slopeTo(w) > delta) {
+                return 1;
+            } else if (slopeTo(v) - slopeTo(w) < -delta) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    }
 
     /**
      * Returns a string representation of this point.
