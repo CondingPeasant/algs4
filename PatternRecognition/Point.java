@@ -103,7 +103,10 @@ public class Point implements Comparable<Point> {
     private class SlopeOrder implements Comparator<Point> {
         public int compare(Point v, Point w) {
             float delta = 0.00001F;
-            if (slopeTo(v) - slopeTo(w) > delta) {
+            if ((slopeTo(v) == Float.MAX_VALUE || slopeTo(v) == -Float.MAX_VALUE)
+                    && (slopeTo(w) == Float.MAX_VALUE || slopeTo(w) == -Float.MAX_VALUE)) {
+                return 0;
+            } else if (slopeTo(v) - slopeTo(w) > delta) {
                 return 1;
             } else if (slopeTo(v) - slopeTo(w) < -delta) {
                 return -1;

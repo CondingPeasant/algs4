@@ -17,15 +17,19 @@ public class PointTest {
         Point p6 = new Point(-1, 1);
         Point p7 = new Point(-1, -1);
         Point p8 = new Point(1, -1);
+        Point p9 = new Point(2, 1);
 
         assertEquals(p0.slopeTo(p1), 0.0, 0.0001F);
         assertEquals(p0.slopeTo(p2), Float.MAX_VALUE, 0.0001F);
         assertEquals(p0.slopeTo(p3), 0.0, 0.0001F);
         assertEquals(p0.slopeTo(p4), -Float.MAX_VALUE, 0.0001F);
         assertEquals(p1.slopeTo(p1), -Float.MAX_VALUE, 0.0001F);
+        assertEquals(p3.slopeTo(p5), 0.5, 0.0001F);
+        assertEquals(p3.slopeTo(p9), 0.33333, 0.0001F);
         assertEquals(p5.slopeTo(p7), 1.0, 0.0001F);
         assertEquals(p6.slopeTo(p8), -1.0, 0.0001F);
         assertEquals(p4.slopeTo(p5), 2.0, 0.0001F);
+        assertEquals(p4.slopeTo(p6), -2.0, 0.0001F);
     }
 
     @Test
@@ -64,7 +68,9 @@ public class PointTest {
         Comparator<Point> comparator = p0.slopeOrder();
         assertTrue(comparator.compare(p1, p2) < 0);
         assertTrue(comparator.compare(p1, p3) == 0);
+        assertTrue(comparator.compare(p2, p4) == 0);
         assertTrue(comparator.compare(p2, p4) > 0);
+        assertTrue(comparator.compare(p5, p6) > 0);
     }
 
 }
