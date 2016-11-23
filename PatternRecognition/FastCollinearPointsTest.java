@@ -1,6 +1,9 @@
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
+
+import edu.princeton.cs.algs4.StdOut;
 
 public class FastCollinearPointsTest {
 
@@ -40,6 +43,9 @@ public class FastCollinearPointsTest {
         FastCollinearPoints fcp = new FastCollinearPoints(points);
         assertEquals(fcp.numberOfSegments(), 1);
         LineSegment[] segmentsResult = {new LineSegment(new Point(0, 0), new Point(3,3))};
+        for (int i = 0; i < fcp.numberOfSegments(); i++) {
+            StdOut.println(fcp.segments()[i]);
+        }
     }
 
     @Test
@@ -47,6 +53,9 @@ public class FastCollinearPointsTest {
         Point[] points = {new Point(0, 0), new Point(1, 2), new Point(2, 2), new Point (3, 3)};
         FastCollinearPoints fcp = new FastCollinearPoints(points);
         assertEquals(fcp.numberOfSegments(), 0);
+        for (int i = 0; i < fcp.numberOfSegments(); i++) {
+            StdOut.println(fcp.segments()[i]);
+        }
     }
 
     @Test
@@ -57,6 +66,9 @@ public class FastCollinearPointsTest {
         assertEquals(fcp.numberOfSegments(), 2);
         LineSegment[] segmentsResult = {new LineSegment(new Point(0, 0), new Point(3,3)),
                                         new LineSegment(new Point(0, 0), new Point(-3, -3))};
+        for (int i = 0; i < fcp.numberOfSegments(); i++) {
+            StdOut.println(fcp.segments()[i]);
+        }
     }
 
     @Test
@@ -65,6 +77,9 @@ public class FastCollinearPointsTest {
         FastCollinearPoints fcp = new FastCollinearPoints(points);
         assertEquals(fcp.numberOfSegments(), 1);
         LineSegment[] segmentsResult = {new LineSegment(new Point(0, -1), new Point(0,2))};
+        for (int i = 0; i < fcp.numberOfSegments(); i++) {
+            StdOut.println(fcp.segments()[i]);
+        }
     }
 
 }

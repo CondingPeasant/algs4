@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import edu.princeton.cs.algs4.StdOut;
-
 public class BruteCollinearPoints {
     private int mNumOfSegments = 0;
     private ArrayList<LineSegment> mSegments = new ArrayList<LineSegment>();
@@ -11,15 +9,15 @@ public class BruteCollinearPoints {
         if (null == points || 0 == points.length)
             throw new NullPointerException();
 
-        if (points.length < 4)
-            return;
-
         for (int i = 0; i < points.length; i++) {
             for (int j = i + 1; j < points.length; j++) {
                 if (points[i].compareTo(points[j]) == 0)
                     throw new IllegalArgumentException();
             }
         }
+
+        if (points.length < 4)
+            return;
 
         for (int i = 0; i < points.length; i++) {
             Comparator<Point> c = points[i].slopeOrder();
@@ -29,13 +27,6 @@ public class BruteCollinearPoints {
                         continue;
                     for (int l = k + 1; l < points.length; l++) {
                         if (0 == c.compare(points[j], points[l])) {
-//                            StdOut.println("i = " + points[i] +
-//                                    ", j = " + points[j] +
-//                                    ", k = " + points[k] +
-//                                    ", l = " + points[l]);
-//                            StdOut.println("slop(i, j) = " + points[i].slopeTo(points[j])
-//                                    + ", slop(i, k) = " + points[i].slopeTo(points[k])
-//                                    + ", slop(i, l) = " + points[i].slopeTo(points[l]));
                             mNumOfSegments++;
                             Point min = points[i];
                             Point max = points[i];

@@ -19,11 +19,11 @@ public class PointTest {
         Point p8 = new Point(1, -1);
         Point p9 = new Point(2, 1);
 
-        assertEquals(p0.slopeTo(p0), -Double.MAX_VALUE, 0.0001F);
+        assertEquals(p0.slopeTo(p0), Double.NEGATIVE_INFINITY, 0.0001F);
         assertEquals(p0.slopeTo(p1), 0.0, 0.0001F);
-        assertEquals(p0.slopeTo(p2), Double.MAX_VALUE, 0.0001F);
+        assertEquals(p0.slopeTo(p2), Double.POSITIVE_INFINITY, 0.0001F);
         assertEquals(p0.slopeTo(p3), 0.0, 0.0001F);
-        assertEquals(p0.slopeTo(p4), Double.MAX_VALUE, 0.0001F);
+        assertEquals(p0.slopeTo(p4), Double.POSITIVE_INFINITY, 0.0001F);
         assertEquals(p3.slopeTo(p5), 0.5, 0.0001F);
         assertEquals(p3.slopeTo(p9), 0.33333, 0.0001F);
         assertEquals(p5.slopeTo(p7), 1.0, 0.0001F);

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import edu.princeton.cs.algs4.Insertion;
 
@@ -11,9 +12,6 @@ public class FastCollinearPoints {
         if (null == points || 0 == points.length)
             throw new NullPointerException();
 
-        if (points.length < 4)
-            return;
-
         for (int i = 0; i < points.length; i++) {
             for (int j = i + 1; j < points.length; j++) {
                 if (points[i].compareTo(points[j]) == 0)
@@ -21,29 +19,33 @@ public class FastCollinearPoints {
             }
         }
 
+        if (points.length < 4)
+            return;
+
         for (int i = 0; i < points.length; i++) {
-            Double[] slope = new Double[points.length - i];
-            Double[] slopeOrigin = new Double[points.length - i];
-            for (int j = i + 1; j < points.length; j++) {
-                slope[j] = points[i].slopeTo(points[j]);
-                slopeOrigin[j] = points[i].slopeTo(points[j]);
-                Insertion.sort(slope, points[i].slopeOrder());
-                for (int k = 0; k + 2 < slope.length; k++) {
-                    if (slope[k] == slope[k + 1]
-                            && slope[k] == slope[k + 2]) {
-                        mNumOfSegments++;
-                        Point min = points[i];
-                        Point max = points[i];
-                        for (int l = 0; l < slopeOrigin.length; l++) {
-                            if(slopeOrigin[l] == slope[k]
-                                    && min.compareTo(points[l + i]) < 0)
-                                min = points[l + i];
-                            if(slopeOrigin[l] == slope[k]
-                                    && max.compareTo(points[l + i]) > 0)
-                                max = points[l + i];
-                        }
-                        mSegments.add(new LineSegment(min, max));
-                    }
+            Point[] tmp = new Point[points.length - i];
+            System.arraycopy(points, i, tmp, 0, points.length - i);
+            Comparator<Point> c = points[i].slopeOrder();
+            Insertion.sort(tmp, c);
+            for (int j = 0; j + 2 < tmp.length; j++) {
+                if (c.compare(tmp[j], tmp[j + 1]) == 0
+                        && c.compare(tmp[j], tmp[j + 2]) == 0) {
+                    mNumOfSegments++;
+                    Point min = points[i];
+                    Point max = points[i];
+                    if (max.compareTo(tmp[j]) < 0)
+                        max = tmp[j];
+                    if (min.compareTo(tmp[j]) > 0)
+                        min = tmp[j];
+                    if (max.compareTo(tmp[j + 1]) < 0)
+                        max = tmp[j + 1];
+                    if (min.compareTo(tmp[j + 1]) > 0)
+                        min = tmp[j + 1];
+                    if (max.compareTo(tmp[j + 2]) < 0)
+                        max = tmp[j + 2];
+                    if (min.compareTo(tmp[j + 2]) > 0)
+                        min = tmp[j + 2];
+                    mSegments.add(new LineSegment(min, max));
                 }
             }
         }
