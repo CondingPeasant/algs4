@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 import java.util.Comparator;
+
 import edu.princeton.cs.algs4.StdDraw;
 
 public class Point implements Comparable<Point> {
@@ -60,11 +61,11 @@ public class Point implements Comparable<Point> {
      */
     public double slopeTo(Point that) {
         if (x != that.x) {
-            return (float) (that.y - y) / (float) (that.x -x);
-        } else if (that.y > y) {
-            return Float.MAX_VALUE;
+            return (double) (that.y - y) / (double) (that.x -x);
+        } else if (that.y != y) {
+            return Double.MAX_VALUE;
         } else {
-            return -Float.MAX_VALUE;
+            return -Double.MAX_VALUE;
         }
     }
 
@@ -102,11 +103,8 @@ public class Point implements Comparable<Point> {
 
     private class SlopeOrder implements Comparator<Point> {
         public int compare(Point v, Point w) {
-            float delta = 0.00001F;
-            if ((slopeTo(v) == Float.MAX_VALUE || slopeTo(v) == -Float.MAX_VALUE)
-                    && (slopeTo(w) == Float.MAX_VALUE || slopeTo(w) == -Float.MAX_VALUE)) {
-                return 0;
-            } else if (slopeTo(v) - slopeTo(w) > delta) {
+            double delta = 0.00001F;
+            if (slopeTo(v) - slopeTo(w) > delta) {
                 return 1;
             } else if (slopeTo(v) - slopeTo(w) < -delta) {
                 return -1;
