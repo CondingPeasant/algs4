@@ -4,8 +4,8 @@ import java.util.Comparator;
 import edu.princeton.cs.algs4.Insertion;
 
 public class FastCollinearPoints {
-        private int mNumOfSegments = 0;
-        private ArrayList<LineSegment> mSegments = new ArrayList<LineSegment>();
+    private int mNumOfSegments = 0;
+    private ArrayList<Point[]> mSegments = new ArrayList<Point[]>();
 
     // finds all line segments containing 4 or more points
     public FastCollinearPoints(Point[] points) {
@@ -23,30 +23,26 @@ public class FastCollinearPoints {
             return;
 
         for (int i = 0; i < points.length; i++) {
-            Point[] tmp = new Point[points.length - i];
-            System.arraycopy(points, i, tmp, 0, points.length - i);
+            Point[] tmpPoints = new Point[points.length];
+            System.arraycopy(points, 0, tmpPoints, 0, points.length);
             Comparator<Point> c = points[i].slopeOrder();
-            Insertion.sort(tmp, c);
-            for (int j = 0; j + 2 < tmp.length; j++) {
-                if (c.compare(tmp[j], tmp[j + 1]) == 0
-                        && c.compare(tmp[j], tmp[j + 2]) == 0) {
-                    mNumOfSegments++;
-                    Point min = points[i];
-                    Point max = points[i];
-                    if (max.compareTo(tmp[j]) < 0)
-                        max = tmp[j];
-                    if (min.compareTo(tmp[j]) > 0)
-                        min = tmp[j];
-                    if (max.compareTo(tmp[j + 1]) < 0)
-                        max = tmp[j + 1];
-                    if (min.compareTo(tmp[j + 1]) > 0)
-                        min = tmp[j + 1];
-                    if (max.compareTo(tmp[j + 2]) < 0)
-                        max = tmp[j + 2];
-                    if (min.compareTo(tmp[j + 2]) > 0)
-                        min = tmp[j + 2];
-                    mSegments.add(new LineSegment(min, max));
+            Insertion.sort(tmpPoints, c);
+            // tmpPoints[0] is points[i] itself
+            int j = 1;
+            while (j < tmpPoints.length) {
+                int k;
+                for (k = j + 1; k < tmpPoints.length; k++) {
+                    if (c.compare(tmpPoints[j], tmpPoints[k]) != 0)
+                        break;
                 }
+                if (k - j >= 3) {
+                    Point[] collinearPoints = new Point[k - j + 1];
+                    collinearPoints[0] = points[i];
+                    System.arraycopy(tmpPoints, j, collinearPoints, 1, k - j);
+                    Insertion.sort(collinearPoints);
+                    addToSegments(collinearPoints[0], collinearPoints[k - j]);
+                }
+                j = k;
             }
         }
     }
@@ -58,7 +54,38 @@ public class FastCollinearPoints {
 
     // the line segments
     public LineSegment[] segments() {
-        return mSegments.toArray(new LineSegment[mSegments.size()]);
+        LineSegment[] ret = new LineSegment[mSegments.size()];
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = new LineSegment(mSegments.get(i)[0], mSegments.get(i)[1]);
+        }
+        return ret;
     }
 
+    // true: add; false: not add
+    private boolean addToSegments(Point p, Point q) {
+        for (Point[] seg : mSegments) {
+            if (isCollinearLineSegment(p, q, seg)) {
+                return false;
+            }
+        }
+        mNumOfSegments++;
+        Point[] newSeg = {p, q};
+        mSegments.add(newSeg);
+        return true;
+    }
+
+    private boolean isCollinearLineSegment(Point p, Point q, Point[] segment) {
+        assert (segment.length == 2);
+        return isPointOnLineSegment(p, segment)
+                && isPointOnLineSegment(q, segment);
+    }
+
+    private boolean isPointOnLineSegment(Point p, Point[] segment) {
+        assert (segment.length == 2);
+        if (p.compareTo(segment[0]) == 0 || p.compareTo(segment[1]) == 0)
+            return true;
+
+        Comparator<Point> c = p.slopeOrder();
+        return c.compare(segment[0], segment[1]) == 0;
+    }
 }
