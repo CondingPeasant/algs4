@@ -1,7 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-
-import edu.princeton.cs.algs4.Insertion;
 
 public class FastCollinearPoints {
     private int mNumOfSegments = 0;
@@ -23,10 +22,10 @@ public class FastCollinearPoints {
             return;
 
         for (int i = 0; i < points.length; i++) {
-            Point[] tmpPoints = new Point[points.length];
-            System.arraycopy(points, 0, tmpPoints, 0, points.length);
+            Point[] tmpPoints = new Point[points.length - i];
+            System.arraycopy(points, i, tmpPoints, 0, points.length - i);
             Comparator<Point> c = points[i].slopeOrder();
-            Insertion.sort(tmpPoints, c);
+            Arrays.sort(tmpPoints, c);
             // tmpPoints[0] is points[i] itself
             int j = 1;
             while (j < tmpPoints.length) {
@@ -39,7 +38,7 @@ public class FastCollinearPoints {
                     Point[] collinearPoints = new Point[k - j + 1];
                     collinearPoints[0] = points[i];
                     System.arraycopy(tmpPoints, j, collinearPoints, 1, k - j);
-                    Insertion.sort(collinearPoints);
+                    Arrays.sort(collinearPoints);
                     addToSegments(collinearPoints[0], collinearPoints[k - j]);
                 }
                 j = k;
