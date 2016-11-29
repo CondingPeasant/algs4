@@ -76,22 +76,12 @@ public class Board {
     public Board twin() {
         int[][] tmpBlocks = copyBlocks();
 
-        for (int i = 1; i < tmpBlocks.length; i++) {
-            for (int j = 1; j < tmpBlocks[0].length; j++) {
-                StdOut.println(tmpBlocks[i][j]);
-            }
-        }
         int row1, col1, row2, col2;
-        row1 = (mBlankRow + 1) % mDimension;
+        row1 = mBlankRow + 1 <= 3 ? mBlankRow + 1 : 1;
         col1 = mBlankCol;
         row2 = mBlankRow;
-        col2 = (mBlankCol + 1) % mDimension;
+        col2 = mBlankCol + 1 <= 3 ? mBlankCol + 1 : 1;
         swapBlock(tmpBlocks, row1, col1, row2, col2);
-        for (int i = 1; i < tmpBlocks.length; i++) {
-            for (int j = 1; j < tmpBlocks[0].length; j++) {
-                StdOut.println(tmpBlocks[i][j]);
-            }
-        }
         return new Board(tmpBlocks);
     }
 
@@ -110,7 +100,7 @@ public class Board {
                     return false;
             }
         }
-        return false;
+        return true;
     }
 
     // all neighboring boards
@@ -127,40 +117,37 @@ public class Board {
     private class BoardIterator implements Iterator<Board> {
         private Board[] mItem = new Board[4];
         private int index = 0;
+        private int capacity = 0;
 
         BoardIterator() {
             if (mBlankRow != 1) {
                 int[][] tmpBlocks = copyBlocks();
                 swapBlock(tmpBlocks, mBlankRow, mBlankCol,
                         mBlankRow - 1, mBlankCol);
-                mItem[index] = new Board(tmpBlocks);
-                index++;
+                mItem[capacity++] = new Board(tmpBlocks);
             }
             if (mBlankCol != 1) {
                 int[][] tmpBlocks = copyBlocks();
                 swapBlock(tmpBlocks, mBlankRow, mBlankCol,
                         mBlankRow, mBlankCol - 1);
-                mItem[index] = new Board(tmpBlocks);
-                index++;
+                mItem[capacity++] = new Board(tmpBlocks);
             }
             if (mBlankRow != mDimension) {
                 int[][] tmpBlocks = copyBlocks();
                 swapBlock(tmpBlocks, mBlankRow, mBlankCol,
                         mBlankRow + 1, mBlankCol);
-                mItem[index] = new Board(tmpBlocks);
-                index++;
+                mItem[capacity++] = new Board(tmpBlocks);
             }
             if (mBlankCol != mDimension) {
                 int[][] tmpBlocks = copyBlocks();
                 swapBlock(tmpBlocks, mBlankRow, mBlankCol,
                         mBlankRow, mBlankCol + 1);
-                mItem[index] = new Board(tmpBlocks);
-                index++;
+                mItem[capacity++] = new Board(tmpBlocks);
             }
         }
 
         public boolean hasNext() {
-            return index <= 4 && mItem[index] != null;
+            return index < capacity;
         }
 
         public void remove() {
@@ -169,10 +156,9 @@ public class Board {
         }
 
         public Board next() {
-            if (index > 4 || mItem[index] == null)
+            if (index >= capacity)
                 throw new NoSuchElementException("There's no next element.");
-            index++;
-            return mItem[index];
+            return mItem[index++];
         }
     }
 
@@ -214,7 +200,6 @@ public class Board {
     }
 
     private int[][] copyBlocks() {
-        StdOut.println("copyBlocks");
         int[][] tmpBlocks = new int[mBlocks.length][mBlocks[0].length];
         for (int i = 1; i < mBlocks.length; i++) {
             for (int j = 1; j < mBlocks[0].length; j++) {
