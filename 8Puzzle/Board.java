@@ -119,7 +119,7 @@ public class Board {
         private int index = 0;
         private int capacity = 0;
 
-        BoardIterator() {
+        public BoardIterator() {
             if (mBlankRow != 1) {
                 int[][] tmpBlocks = copyBlocks();
                 swapBlock(tmpBlocks, mBlankRow, mBlankCol,
