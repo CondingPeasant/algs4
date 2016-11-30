@@ -4,16 +4,18 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.MinPQ;
-//import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
     private class SearchNode implements Comparable<SearchNode> {
-        public Board currentBoard;
-        public SearchNode preNode;
+        private Board currentBoard;
+        private SearchNode preNode;
+
         public SearchNode(Board current, SearchNode pre) {
             currentBoard = current;
             preNode = pre;
         }
+
         public int compareTo(SearchNode that) {
             if (currentBoard.hamming() + currentBoard.manhattan()
                     < that.currentBoard.hamming() + that.currentBoard.manhattan())
@@ -22,6 +24,14 @@ public class Solver {
                     == that.currentBoard.hamming() + that.currentBoard.manhattan())
                 return 0;
             return 1;
+        }
+
+        public Board getCurrentBoard() {
+            return currentBoard;
+        }
+
+        public SearchNode getPreNode() {
+            return preNode;
         }
     }
 
@@ -37,24 +47,25 @@ public class Solver {
         mSolveQueue.insert(initialNode);
         mTwinQueue.insert(initialTwinNode);
         while (!mSolveQueue.isEmpty()
-                && !mSolveQueue.min().currentBoard.isGoal()) {
-            if (!mTwinQueue.min().currentBoard.isGoal()) {
+                && !mSolveQueue.min().getCurrentBoard().isGoal()) {
+            if (!mTwinQueue.min().getCurrentBoard().isGoal()) {
                 SearchNode tmp = mSolveQueue.delMin();
                 SearchNode tmpTwin = mTwinQueue.delMin();
-//                StdOut.println("hamming = " + tmp.currentBoard.hamming() + ", manhattan = " + tmp.currentBoard.manhattan());
-//                StdOut.println(tmp.currentBoard);
+//                StdOut.println("hamming = " + tmp.getCurrentBoard().hamming()
+//                        + ", manhattan = " + tmp.getCurrentBoard().manhattan());
+//                StdOut.println(tmp.getCurrentBoard());
 //                StdOut.println("twin:");
-//                StdOut.println(tmpTwin.currentBoard);
+//                StdOut.println(tmpTwin.getCurrentBoard());
 //                try {
 //                    Thread.sleep(500);
 //                } catch (Exception e) {
 //                }
-                for (Board b : tmp.currentBoard.neighbors()) {
+                for (Board b : tmp.getCurrentBoard().neighbors()) {
                     if (!isOnGameTree(tmp, b)) {
                         mSolveQueue.insert(new SearchNode(b, tmp));
                     }
                 }
-                for (Board b : tmpTwin.currentBoard.neighbors()) {
+                for (Board b : tmpTwin.getCurrentBoard().neighbors()) {
                     if (!isOnGameTree(tmpTwin, b)) {
                         mTwinQueue.insert(new SearchNode(b, tmpTwin));
                     }
@@ -101,9 +112,10 @@ public class Solver {
         private int index = 0;
 
         public SolutionIterator() {
-            mItem.add(mSolveQueue.min().currentBoard);
-            for (SearchNode s = mSolveQueue.min().preNode; s != null; s = s.preNode) {
-                mItem.add(s.currentBoard);
+            mItem.add(mSolveQueue.min().getCurrentBoard());
+            for (SearchNode s = mSolveQueue.min().getPreNode();
+                    s != null; s = s.getPreNode()) {
+                mItem.add(s.getCurrentBoard());
             }
             Collections.reverse(mItem);
             // - 1 due to Item inluding initial board
@@ -131,8 +143,9 @@ public class Solver {
     }
 
     private boolean isOnGameTree(SearchNode currentNode, Board neighbor) {
-        for (SearchNode p = currentNode.preNode; p != null; p = p.preNode) {
-            if (neighbor.equals(p.currentBoard))
+        for (SearchNode p = currentNode.getPreNode();
+                p != null; p = p.getPreNode()) {
+            if (neighbor.equals(p.getCurrentBoard()))
                 return true;
         }
         return false;

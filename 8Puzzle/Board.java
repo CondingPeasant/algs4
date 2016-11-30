@@ -1,10 +1,10 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import edu.princeton.cs.algs4.StdOut;
+// import edu.princeton.cs.algs4.StdOut;
 
 public class Board {
-    private static final int blank = 0;
+    private static final int BLANK = 0;
     private int mDimension;
     private int mBlankRow;
     private int mBlankCol;
@@ -20,7 +20,7 @@ public class Board {
         for (int i = 1; i < blocks.length; i++) {
             for (int j = 1; j < blocks[0].length; j++) {
                 mBlocks[i][j] = blocks[i][j];
-                if (mBlocks[i][j] == blank) {
+                if (mBlocks[i][j] == BLANK) {
                     mBlankRow = i;
                     mBlankCol = j;
                 }
@@ -38,7 +38,7 @@ public class Board {
         int count = 0;
         for (int i = 1; i <= mDimension; i++) {
             for (int j = 1; j <= mDimension; j++) {
-                if (!isInRightPosition(i,j) && !isBlank(i,j)) {
+                if (!isInRightPosition(i, j) && !isBlank(i, j)) {
                     count++;
                 }
             }
@@ -51,7 +51,7 @@ public class Board {
         int count = 0;
         for (int i = 1; i <= mDimension; i++) {
             for (int j = 1; j <= mDimension; j++) {
-                if (isInRightPosition(i,j) || isBlank(i, j))
+                if (isInRightPosition(i, j) || isBlank(i, j))
                     continue;
                 int rightRow = (mBlocks[i][j] - 1) / mDimension + 1;
                 int rightCol = mBlocks[i][j] - mDimension * (rightRow - 1);
@@ -65,7 +65,7 @@ public class Board {
     public boolean isGoal() {
         for (int i = 1; i <= mDimension; i++) {
             for (int j = 1; j <= mDimension; j++) {
-                if (!isInRightPosition(i,j))
+                if (!isInRightPosition(i, j))
                     return false;
             }
         }
@@ -87,7 +87,7 @@ public class Board {
 
     // does this board equal y?
     public boolean equals(Object y) {
-        if (!(y instanceof Board))
+        if (y.getClass() != Board.class)
             return false;
         Board board = (Board) y;
         
@@ -185,7 +185,7 @@ public class Board {
 
     private boolean isInRightPosition(int row, int col) {
         if (row == mDimension && col == mDimension)
-            return mBlocks[row][col] == blank;
+            return mBlocks[row][col] == BLANK;
         return mBlocks[row][col] == convert2DTo1D(row, col);
     }
 
