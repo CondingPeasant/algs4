@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.StdOut;
+//import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
     private class SearchNode implements Comparable<SearchNode> {
@@ -26,26 +26,45 @@ public class Solver {
     }
 
     private MinPQ<SearchNode> mSolveQueue = new MinPQ<SearchNode>();
+    private MinPQ<SearchNode> mTwinQueue = new MinPQ<SearchNode>();
     private boolean mIsSolvable = true;
     private int mMoves = 0;
+    private Iterator<Board> mSolutionIterator;
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         SearchNode initialNode = new SearchNode(initial, null);
+        SearchNode initialTwinNode = new SearchNode(initial.twin(), null);
         mSolveQueue.insert(initialNode);
-        while (mSolveQueue.isEmpty()
-                || !mSolveQueue.min().currentBoard.isGoal()) {
-            SearchNode tmp = mSolveQueue.delMin();
-//            StdOut.println("hamming = " + tmp.currentBoard.hamming() + ", manhattan = " + tmp.currentBoard.manhattan());
-//            StdOut.println(tmp.currentBoard);
-//            try {
-//                Thread.sleep(1000);
-//            } catch (Exception e) {
-//            }
-            for (Board b : tmp.currentBoard.neighbors()) {
-                if (!b.equals(tmp.currentBoard))
-                    mSolveQueue.insert(new SearchNode(b, tmp));
+        mTwinQueue.insert(initialTwinNode);
+        while (!mSolveQueue.isEmpty()
+                && !mSolveQueue.min().currentBoard.isGoal()) {
+            if (!mTwinQueue.min().currentBoard.isGoal()) {
+                SearchNode tmp = mSolveQueue.delMin();
+                SearchNode tmpTwin = mTwinQueue.delMin();
+//                StdOut.println("hamming = " + tmp.currentBoard.hamming() + ", manhattan = " + tmp.currentBoard.manhattan());
+//                StdOut.println(tmp.currentBoard);
+//                StdOut.println("twin:");
+//                StdOut.println(tmpTwin.currentBoard);
+//                try {
+//                    Thread.sleep(500);
+//                } catch (Exception e) {
+//                }
+                for (Board b : tmp.currentBoard.neighbors()) {
+                    if (!isOnGameTree(tmp, b)) {
+                        mSolveQueue.insert(new SearchNode(b, tmp));
+                    }
+                }
+                for (Board b : tmpTwin.currentBoard.neighbors()) {
+                    if (!isOnGameTree(tmpTwin, b)) {
+                        mTwinQueue.insert(new SearchNode(b, tmpTwin));
+                    }
+                }
+            } else {
+                mIsSolvable = false;
+                break;
             }
         }
+        mSolutionIterator = new SolutionIterator();
     }
 
     // is the initial board solvable?
@@ -55,17 +74,25 @@ public class Solver {
 
     // min number of moves to solve initial board; -1 if unsolvable
     public int moves() {
-        return mMoves;
+        if (mIsSolvable) {
+            return mMoves;
+        } else {
+            return -1;
+        }
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
-        return new BoardSolution();
+        if (mIsSolvable) {
+            return new BoardSolution();
+        } else {
+            return null;
+        }
     }
 
     private class BoardSolution implements Iterable<Board> {
         public Iterator<Board> iterator() {
-            return new SolutionIterator();
+            return mSolutionIterator;
         }
     }
 
@@ -74,15 +101,13 @@ public class Solver {
         private int index = 0;
 
         public SolutionIterator() {
-            if (mIsSolvable) {
-                mItem.add(mSolveQueue.min().currentBoard);
-                for (SearchNode s = mSolveQueue.min().preNode; s != null; s = s.preNode) {
-                    mItem.add(s.currentBoard);
-                }
-                Collections.reverse(mItem);
-                // - 1 due to Item inluding initial board
-                mMoves = mItem.size() - 1;
+            mItem.add(mSolveQueue.min().currentBoard);
+            for (SearchNode s = mSolveQueue.min().preNode; s != null; s = s.preNode) {
+                mItem.add(s.currentBoard);
             }
+            Collections.reverse(mItem);
+            // - 1 due to Item inluding initial board
+            mMoves = mItem.size() - 1;
         }
 
         public boolean hasNext() {
@@ -103,5 +128,13 @@ public class Solver {
 
     // solve a slider puzzle (given below)
     public static void main(String[] args) {
+    }
+
+    private boolean isOnGameTree(SearchNode currentNode, Board neighbor) {
+        for (SearchNode p = currentNode.preNode; p != null; p = p.preNode) {
+            if (neighbor.equals(p.currentBoard))
+                return true;
+        }
+        return false;
     }
 }
