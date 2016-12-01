@@ -95,15 +95,13 @@ public class Solver {
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution() {
         if (mIsSolvable) {
-            return new BoardSolution();
+            return new Iterable<Board>() {
+                public Iterator<Board> iterator() {
+                    return mSolutionIterator;
+                }
+            };
         } else {
             return null;
-        }
-    }
-
-    private class BoardSolution implements Iterable<Board> {
-        public Iterator<Board> iterator() {
-            return mSolutionIterator;
         }
     }
 

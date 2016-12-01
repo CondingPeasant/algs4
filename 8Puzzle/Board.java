@@ -108,13 +108,11 @@ public class Board {
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
-        return new BoardNeighbors();
-    }
-
-    private class BoardNeighbors implements Iterable<Board> {
-        public Iterator<Board> iterator() {
-            return new BoardIterator();
-        }
+        return new Iterable<Board>() {
+            public Iterator<Board> iterator() {
+                return new BoardIterator();
+            }
+        };
     }
 
     private class BoardIterator implements Iterator<Board> {
