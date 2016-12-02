@@ -13,29 +13,37 @@ public class KdTreeTest {
 
     @Test
     public void testIsEmpty() {
-        PointSET ps = new PointSET();
-        assertTrue(ps.isEmpty());
-        ps.insert(new Point2D(0.5, 0.5));
-        assertFalse(ps.isEmpty());
+        KdTree kt = new KdTree();
+        assertTrue(kt.isEmpty());
+        kt.insert(new Point2D(0.5, 0.5));
+        assertFalse(kt.isEmpty());
     }
 
     @Test
     public void testSize() {
-        PointSET ps = new PointSET();
-        assertEquals(ps.size(), 0);
-        ps.insert(new Point2D(0.5, 0.5));
-        assertEquals(ps.size(), 1);
-        ps.insert(new Point2D(0.5, 0.5));
-        assertEquals(ps.size(), 1);
-        ps.insert(new Point2D(0.6, 0.5));
-        assertEquals(ps.size(), 2);
+        KdTree kt = new KdTree();
+        assertEquals(kt.size(), 0);
+        kt.insert(new Point2D(1, 1));
+        assertEquals(kt.size(), 1);
+        kt.insert(new Point2D(1, 1));
+        assertEquals(kt.size(), 2);
+        kt.insert(new Point2D(1, 1));
+        assertEquals(kt.size(), 3);
+        kt.insert(new Point2D(1, 1));
+        assertEquals(kt.size(), 4);
+        kt.insert(new Point2D(1, 1));
+        assertEquals(kt.size(), 5);
+        kt.insert(new Point2D(1, 1));
+        assertEquals(kt.size(), 6);
+        kt.insert(new Point2D(1, 2));
+        assertEquals(kt.size(), 7);
     }
 
     @Test
     public void testInsert() {
-        PointSET ps = new PointSET();
+        KdTree kt = new KdTree();
         try {
-            ps.insert(null);
+            kt.insert(null);
             fail("Not yet implemented");
         } catch (NullPointerException aNullPointerException) {
         }
@@ -45,17 +53,29 @@ public class KdTreeTest {
     public void testContains() {
         Point2D p1 = new Point2D(0.5, 0.5);
         Point2D p2 = new Point2D(0.6, 0.5);
-        PointSET ps = new PointSET();
-        assertFalse(ps.contains(p1));
-        assertFalse(ps.contains(p2));
+        KdTree kt = new KdTree();
+        assertFalse(kt.contains(p1));
+        assertFalse(kt.contains(p2));
 
-        ps.insert(p1);
-        assertTrue(ps.contains(p1));
-        assertFalse(ps.contains(p2));
+        kt.insert(p1);
+        assertTrue(kt.contains(p1));
+        assertFalse(kt.contains(p2));
 
-        ps.insert(p2);
-        assertTrue(ps.contains(p1));
-        assertTrue(ps.contains(p2));
+        kt.insert(p2);
+        assertTrue(kt.contains(p1));
+        assertTrue(kt.contains(p2));
+
+        kt.insert(p1);
+        assertTrue(kt.contains(p1));
+        assertTrue(kt.contains(p2));
+
+        kt.insert(p1);
+        assertTrue(kt.contains(p1));
+        assertTrue(kt.contains(p2));
+
+        kt.insert(p1);
+        assertTrue(kt.contains(p1));
+        assertTrue(kt.contains(p2));
     }
 
     public void testDraw() {
@@ -77,18 +97,19 @@ public class KdTreeTest {
         Point2D p7 = new Point2D(0.9, 0.7);
         Point2D p8 = new Point2D(0.7, 0.9);
         Point2D p9 = new Point2D(0.8, 0.8);
-        PointSET ps = new PointSET();
-        ps.insert(p1);
-        ps.insert(p2);
-        ps.insert(p3);
-        ps.insert(p4);
-        ps.insert(p5);
-        ps.insert(p6);
-        ps.insert(p7);
-        ps.insert(p7);
-        ps.insert(p8);
-        ps.insert(p9);
-        assertEquals(ps.nearest(p2), p1);
+        KdTree kt = new KdTree();
+        kt.insert(p1);
+        kt.insert(p2);
+        kt.insert(p3);
+        kt.insert(p4);
+        kt.insert(p5);
+        kt.insert(p6);
+        kt.insert(p7);
+        kt.insert(p7);
+        kt.insert(p8);
+        kt.insert(p9);
+        assertEquals(kt.nearest(new Point2D(0.5, 0.6)), p1);
+        assertEquals(kt.nearest(p1), p1);
     }
 
 

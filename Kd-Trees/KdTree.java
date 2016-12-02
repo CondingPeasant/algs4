@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
@@ -16,34 +17,38 @@ public class KdTree {
         public KdTreeNode(Point2D point, boolean splitDirection) {
             mPoint = point;
             mSplitDirection = splitDirection;
+            mLChild = null;
+            mRChild = null;
         }
 
         public void insert(Point2D p) {
             if (mSplitDirection == VERTICAL) {
-                KdTreeNode next;
-                if (p.x() >= mPoint.x()) {
-                    next = mRChild;
+                if (p.x() - mPoint.x() >= DELTA) {
+                    if (mRChild == null) {
+                        mRChild = new KdTreeNode(p, HORIZONAL);
+                    } else {
+                        mRChild.insert(p);
+                    }
                 } else {
-                    next = mLChild;
-                }
-
-                if (next == null) {
-                    next = new KdTreeNode(p, HORIZONAL);
-                } else {
-                    next.insert(p);
+                    if (mLChild == null) {
+                        mLChild = new KdTreeNode(p, HORIZONAL);
+                    } else {
+                        mLChild.insert(p);
+                    }
                 }
             } else {
-                KdTreeNode next;
-                if (p.y() >= mPoint.y()) {
-                    next = mRChild;
+                if (p.y() - mPoint.y() >= DELTA) {
+                    if (mRChild == null) {
+                        mRChild = new KdTreeNode(p, VERTICAL);
+                    } else {
+                        mRChild.insert(p);
+                    }
                 } else {
-                    next = mLChild;
-                }
-
-                if (next == null) {
-                    next = new KdTreeNode(p, VERTICAL);
-                } else {
-                    next.insert(p);
+                    if (mLChild == null) {
+                        mLChild = new KdTreeNode(p, VERTICAL);
+                    } else {
+                        mLChild.insert(p);
+                    }
                 }
             }
         }
@@ -54,13 +59,13 @@ public class KdTree {
 
             KdTreeNode next;
             if (mSplitDirection == VERTICAL) {
-                if (p.x() > mPoint.x()) {
+                if (p.x() - mPoint.x() >= DELTA) {
                     next = mRChild;
                 } else {
                     next = mLChild;
                 }
             } else {
-                if (p.y() > mPoint.x()) {
+                if (p.y() - mPoint.x() >= DELTA) {
                     next = mRChild;
                 } else {
                     next = mLChild;
@@ -87,6 +92,7 @@ public class KdTree {
         }
     }
 
+    private static final double DELTA = 0.000001D;
     private KdTreeNode mRoot;
     private int mSize;
     // construct an empty set of points 
@@ -110,10 +116,11 @@ public class KdTree {
 
         if (mRoot == null) {
             mRoot = new KdTreeNode(p, KdTreeNode.VERTICAL);
+        } else {
+            mRoot.insert(p);
         }
 
-        mRoot.insert(p);
-        mSize ++;
+        mSize++;
     }
 
     // does the set contain point p? 
@@ -152,7 +159,7 @@ public class KdTree {
         public RangeIterator(RectHV rect) {
             ArrayList<Point2D> arr = new ArrayList<Point2D>();
             tranverse(mRoot, rect, arr);
-            mCollection = (Point2D[]) arr.toArray(new Point2D[arr.size()]);
+            mCollection = arr.toArray(new Point2D[arr.size()]);
         }
 
         public boolean hasNext() {
@@ -165,10 +172,16 @@ public class KdTree {
         }
 
         public Point2D next() {
+            if (index >= mCollection.length)
+                throw new NoSuchElementException();
             return mCollection[index++];
         }
 
         public void tranverse(KdTreeNode node, RectHV rect, ArrayList<Point2D> arr) {
+            if (node == null) {
+                return;
+            }
+
             tranverse(node.getLChild(), rect, arr);
             if (rect.contains(node.getPoint())) {
                 arr.add(node.getPoint());
@@ -195,7 +208,7 @@ public class KdTree {
         double distanceToCurrent = node.getPoint().distanceTo(p);
         double distanceToLChild = Double.POSITIVE_INFINITY;
         double distanceToRChild = Double.POSITIVE_INFINITY;
-        if (distanceToCurrent < nearestDistance) {
+        if (distanceToCurrent - nearestDistance <= -DELTA) {
             ret = node.getPoint();
             nearestDistance = distanceToCurrent;
         }
@@ -204,11 +217,11 @@ public class KdTree {
         if (node.getRChild() != null)
             distanceToRChild = node.getRChild().getPoint().distanceTo(p);
 
-        if (distanceToLChild > distanceToCurrent
-                && distanceToLChild > distanceToRChild) {
+        if (distanceToLChild - distanceToCurrent >= DELTA
+                && distanceToLChild - distanceToRChild >= DELTA) {
             rightRet = findNearest(p, distanceToCurrent, node.getRChild());
-        } else if (distanceToRChild > distanceToCurrent
-                && distanceToRChild > distanceToLChild) {
+        } else if (distanceToRChild - distanceToCurrent >= DELTA
+                && distanceToRChild - distanceToLChild >= DELTA) {
             leftRet = findNearest(p, distanceToCurrent, node.getLChild());
         } else {
             leftRet = findNearest(p, distanceToCurrent, node.getLChild());
@@ -216,11 +229,11 @@ public class KdTree {
         }
 
         if (rightRet != null
-                && rightRet.distanceTo(p) < nearestDistance)
+                && rightRet.distanceTo(p) - nearestDistance <= -DELTA)
             ret = rightRet;
 
         if (leftRet != null
-                && leftRet.distanceTo(p) < nearestDistance)
+                && leftRet.distanceTo(p) - nearestDistance <= -DELTA)
             ret = leftRet;
 
         return ret;

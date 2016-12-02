@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
@@ -70,7 +71,7 @@ public class PointSET {
                 if (rect.contains(p))
                     item.add(p);
             }
-            mCollection = (Point2D[]) item.toArray(new Point2D[item.size()]);
+            mCollection = item.toArray(new Point2D[item.size()]);
         }
 
         public boolean hasNext() {
@@ -83,6 +84,8 @@ public class PointSET {
         }
 
         public Point2D next() {
+            if (index >= mCollection.length)
+                throw new NoSuchElementException();
             return mCollection[index++];
         }
     }
@@ -96,7 +99,7 @@ public class PointSET {
         Iterator<Point2D> it = mSet.iterator();
         while (it.hasNext()) {
             Point2D that = it.next();
-            if (!p.equals(that) && p.distanceTo(that) < min) {
+            if (p.distanceTo(that) < min) {
                 min = p.distanceTo(that);
                 ret = that;
             }
