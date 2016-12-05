@@ -89,6 +89,48 @@ public class KdTree {
                 return next.contains(p);
             }
         }
+        
+        public Point2D nearest(Point2D p, double nearestDistance) {
+            double distanceToLeftChild = Double.POSITIVE_INFINITY;
+            double distanceToRightChild = Double.POSITIVE_INFINITY;
+            double distanceToCurrent = getPoint().distanceTo(p);
+
+            KdTreeNode lChild;
+            KdTreeNode rChild;
+            Point2D lRet = null;
+            Point2D rRet = null;
+            
+            lChild = getLChild();
+            rChild = getRChild();
+
+            if (lChild == null && rChild == null) {
+                if (distanceToCurrent < nearestDistance - DELTA)
+                    return getPoint();
+                return null;
+            }
+
+            if (lChild != null) {
+                lRet = lChild.nearest(p, nearestDistance);
+                distanceToLeftChild = lRet.distanceTo(p);
+            }
+
+            if (rChild != null) {
+                rRet = rChild.nearest(p, nearestDistance);
+                distanceToRightChild = rRet.distanceTo(p);
+            }
+
+            if (distanceToRightChild < distanceToLeftChild - DELTA
+                    && distanceToRightChild < distanceToCurrent - DELTA) {
+                return rRet;
+            }
+
+            if (distanceToLeftChild < distanceToRightChild - DELTA
+                    && distanceToLeftChild < distanceToCurrent - DELTA) {
+                return lRet;
+            }
+
+            return getPoint();
+        }
 
         public void draw() {
             mDraw.setPenColor(Draw.BLACK);
@@ -115,7 +157,7 @@ public class KdTree {
         }
     }
 
-    private static final double DELTA = 0.000001D;
+    private static final double DELTA = 0.0000001D;
     private KdTreeNode mRoot;
     private int mSize;
     private Draw mDraw;
@@ -234,48 +276,10 @@ public class KdTree {
         if (p == null)
             throw new NullPointerException();
 
-        return findNearest(p, Double.POSITIVE_INFINITY, mRoot);
-    }
-
-    private Point2D findNearest(Point2D p, double nearestDistance, KdTreeNode node) {
-        Point2D ret = null;
-        Point2D leftRet = null;
-        Point2D rightRet = null;
-        if (node == null)
+        if (mRoot == null)
             return null;
 
-        double distanceToCurrent = node.getPoint().distanceTo(p);
-        double distanceToLChild = Double.POSITIVE_INFINITY;
-        double distanceToRChild = Double.POSITIVE_INFINITY;
-        if (distanceToCurrent - nearestDistance <= -DELTA) {
-            ret = node.getPoint();
-            nearestDistance = distanceToCurrent;
-        }
-        if (node.getLChild() != null)
-            distanceToLChild = node.getLChild().getPoint().distanceTo(p);
-        if (node.getRChild() != null)
-            distanceToRChild = node.getRChild().getPoint().distanceTo(p);
-
-        if (distanceToLChild - distanceToCurrent >= DELTA
-                && distanceToLChild - distanceToRChild >= DELTA) {
-            rightRet = findNearest(p, distanceToCurrent, node.getRChild());
-        } else if (distanceToRChild - distanceToCurrent >= DELTA
-                && distanceToRChild - distanceToLChild >= DELTA) {
-            leftRet = findNearest(p, distanceToCurrent, node.getLChild());
-        } else {
-            leftRet = findNearest(p, distanceToCurrent, node.getLChild());
-            rightRet = findNearest(p, distanceToCurrent, node.getRChild());
-        }
-
-        if (rightRet != null
-                && rightRet.distanceTo(p) - nearestDistance <= -DELTA)
-            ret = rightRet;
-
-        if (leftRet != null
-                && leftRet.distanceTo(p) - nearestDistance <= -DELTA)
-            ret = leftRet;
-
-        return ret;
+        return mRoot.nearest(p, Double.POSITIVE_INFINITY);
     }
 
     // unit testing of the methods (optional) 

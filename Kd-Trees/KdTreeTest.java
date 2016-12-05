@@ -49,7 +49,7 @@ public class KdTreeTest {
     @Test
     public void testContains() throws InterruptedException {
         KdTree kt = new KdTree();
-        int length = 1000;
+        int length = 100;
         Point2D[] arr = new Point2D[length * length];
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < length; j++) {
