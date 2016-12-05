@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdOut;
 
 public class KdTreeTest {
     private RectHV rect = new RectHV(0.0, 0.0, 1.0, 1.0);
@@ -26,17 +27,13 @@ public class KdTreeTest {
         kt.insert(new Point2D(1, 1));
         assertEquals(kt.size(), 1);
         kt.insert(new Point2D(1, 1));
-        assertEquals(kt.size(), 2);
-        kt.insert(new Point2D(1, 1));
-        assertEquals(kt.size(), 3);
-        kt.insert(new Point2D(1, 1));
-        assertEquals(kt.size(), 4);
-        kt.insert(new Point2D(1, 1));
-        assertEquals(kt.size(), 5);
-        kt.insert(new Point2D(1, 1));
-        assertEquals(kt.size(), 6);
+        assertEquals(kt.size(), 1);
         kt.insert(new Point2D(1, 2));
-        assertEquals(kt.size(), 7);
+        assertEquals(kt.size(), 2);
+        kt.insert(new Point2D(1, 2));
+        assertEquals(kt.size(), 2);
+        kt.insert(new Point2D(1, 3));
+        assertEquals(kt.size(), 3);
     }
 
     @Test
@@ -50,32 +47,26 @@ public class KdTreeTest {
     }
 
     @Test
-    public void testContains() {
-        Point2D p1 = new Point2D(0.5, 0.5);
-        Point2D p2 = new Point2D(0.6, 0.5);
+    public void testContains() throws InterruptedException {
         KdTree kt = new KdTree();
-        assertFalse(kt.contains(p1));
-        assertFalse(kt.contains(p2));
-
-        kt.insert(p1);
-        assertTrue(kt.contains(p1));
-        assertFalse(kt.contains(p2));
-
-        kt.insert(p2);
-        assertTrue(kt.contains(p1));
-        assertTrue(kt.contains(p2));
-
-        kt.insert(p1);
-        assertTrue(kt.contains(p1));
-        assertTrue(kt.contains(p2));
-
-        kt.insert(p1);
-        assertTrue(kt.contains(p1));
-        assertTrue(kt.contains(p2));
-
-        kt.insert(p1);
-        assertTrue(kt.contains(p1));
-        assertTrue(kt.contains(p2));
+        int length = 1000;
+        Point2D[] arr = new Point2D[length * length];
+        for (int i = 0; i < length; i++) {
+            for (int j = 0; j < length; j++) {
+                arr[i * length + j] = new Point2D(i, j);
+                kt.insert(arr[i * length + j]);
+                try {
+                    assertTrue(kt.contains(arr[i * length + j]));
+                } catch (AssertionError anAssertionError) {
+                    StdOut.println("i = " + i + ", j = " + j);
+                    StdOut.println(arr[i * length + j]);
+                    StdOut.println("kt.size() = " + kt.size());
+                    kt.draw();
+                    Thread.sleep(10 * 1000);
+                    fail();
+                }
+            }
+        }
     }
 
     public void testDraw() {

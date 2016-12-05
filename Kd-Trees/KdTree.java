@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import edu.princeton.cs.algs4.Draw;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 
@@ -21,36 +22,46 @@ public class KdTree {
             mRChild = null;
         }
 
-        public void insert(Point2D p) {
+        public boolean insert(Point2D p) {
+            if (mPoint.equals(p))
+                return false;
+
+            boolean ret;
             if (mSplitDirection == VERTICAL) {
-                if (p.x() - mPoint.x() >= DELTA) {
+                // equals p.x() >= mPoint.x()
+                if (p.x() - mPoint.x() >= -DELTA) {
                     if (mRChild == null) {
                         mRChild = new KdTreeNode(p, HORIZONAL);
+                        ret = true;
                     } else {
-                        mRChild.insert(p);
+                        ret = mRChild.insert(p);
                     }
                 } else {
                     if (mLChild == null) {
                         mLChild = new KdTreeNode(p, HORIZONAL);
+                        ret = true;
                     } else {
-                        mLChild.insert(p);
+                        ret = mLChild.insert(p);
                     }
                 }
             } else {
-                if (p.y() - mPoint.y() >= DELTA) {
+                if (p.y() - mPoint.y() >= -DELTA) {
                     if (mRChild == null) {
                         mRChild = new KdTreeNode(p, VERTICAL);
+                        ret = true;
                     } else {
-                        mRChild.insert(p);
+                        ret = mRChild.insert(p);
                     }
                 } else {
                     if (mLChild == null) {
                         mLChild = new KdTreeNode(p, VERTICAL);
+                        ret = true;
                     } else {
-                        mLChild.insert(p);
+                        ret = mLChild.insert(p);
                     }
                 }
             }
+            return ret;
         }
 
         public boolean contains(Point2D p) {
@@ -59,13 +70,13 @@ public class KdTree {
 
             KdTreeNode next;
             if (mSplitDirection == VERTICAL) {
-                if (p.x() - mPoint.x() >= DELTA) {
+                if (p.x() - mPoint.x() >= -DELTA) {
                     next = mRChild;
                 } else {
                     next = mLChild;
                 }
             } else {
-                if (p.y() - mPoint.x() >= DELTA) {
+                if (p.y() - mPoint.y() >= -DELTA) {
                     next = mRChild;
                 } else {
                     next = mLChild;
@@ -76,6 +87,18 @@ public class KdTree {
                 return false;
             } else {
                 return next.contains(p);
+            }
+        }
+
+        public void draw() {
+            mDraw.setPenColor(Draw.BLACK);
+            mPoint.draw();
+            if (mSplitDirection == VERTICAL) {
+                mDraw.setPenColor(Draw.RED);
+                mDraw.line(mPoint.x(), 0, mPoint.x(), 10);
+            } else {
+                mDraw.setPenColor(Draw.BLUE);
+                mDraw.line(0, mPoint.y(), 10, mPoint.y());
             }
         }
 
@@ -95,6 +118,7 @@ public class KdTree {
     private static final double DELTA = 0.000001D;
     private KdTreeNode mRoot;
     private int mSize;
+    private Draw mDraw;
     // construct an empty set of points 
     public KdTree() {
     }
@@ -116,11 +140,12 @@ public class KdTree {
 
         if (mRoot == null) {
             mRoot = new KdTreeNode(p, KdTreeNode.VERTICAL);
+            mSize++;
         } else {
-            mRoot.insert(p);
+            if (mRoot.insert(p))
+                mSize++;
         }
 
-        mSize++;
     }
 
     // does the set contain point p? 
@@ -136,7 +161,21 @@ public class KdTree {
 
     // draw all points to standard draw 
     public void draw() {
-        // TODO
+        if (mDraw == null) {
+            mDraw = new Draw();
+        } else {
+            mDraw.clear();
+        }
+        draw(mRoot);
+        mDraw.show();
+    }
+
+    private void draw(KdTreeNode node) {
+        if (node == null)
+            return;
+        draw(node.getLChild());
+        node.draw();
+        draw(node.getRChild());
     }
 
     // all points that are inside the rectangle 
