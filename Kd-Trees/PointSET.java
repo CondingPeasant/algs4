@@ -47,7 +47,7 @@ public class PointSET {
     }
 
     // all points that are inside the rectangle 
-    public Iterable<Point2D> range(RectHV rect) {
+    public Iterable<Point2D> range(final RectHV rect) {
         if (rect == null)
             throw new NullPointerException();
 
