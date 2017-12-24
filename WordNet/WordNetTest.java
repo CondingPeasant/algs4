@@ -9,19 +9,19 @@ public class WordNetTest {
     @Test
     public void WordNetTest(String synsets, String hypernyms) {
         try {
-            WordTest(null, "test");
+            WordNet wn = new WordNet(null, "test");
         } catch (IllegalArgumentException anIllegalArgumentException) {
             // do nothing
         }
 
         try {
-            WordTest("test", null);
+            WordNet wn = new WordNet(null, "test");
         } catch (IllegalArgumentException anIllegalArgumentException) {
             // do nothing
         }
 
         try {
-            WordTest(null, null);
+            WordNet wn = new WordNet(null, "test");
         } catch (IllegalArgumentException anIllegalArgumentException) {
             // do nothing
         }
